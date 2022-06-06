@@ -192,6 +192,7 @@ let user_answer=select_answer();
  //commencer le quiz
 form.addEventListener('submit', function(e){
     e.preventDefault();
+    
     if(Nom.value=="" && Mail.value==""){
 
         error_name.innerText="veuillez saisir un nom!";
