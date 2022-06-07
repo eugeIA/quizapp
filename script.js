@@ -144,7 +144,7 @@ let question_number=1;
 page_en_cours.innerText=1;
 let counter;
 let user_score=0;
-
+let bar_progress=0;
 
 //page result
 const page_result=document.querySelector("#result");
@@ -189,7 +189,7 @@ page_result.style.display="none";
 
 
 let user_answer=select_answer();
- //commencer le quiz
+ let mask_mail=/@gmail.com$/;
 form.addEventListener('submit', function(e){
     e.preventDefault();
     
@@ -203,7 +203,11 @@ form.addEventListener('submit', function(e){
         Nom.style.borderColor="red";
       }
     else if(Nom.value.length<2){
-        error_name.innerText="veuillez saisir un nom!";
+        error_name.innerText="veuillez saisir un nom avec plus de deux lettres!";
+        Nom.style.borderColor="red";
+    }
+    else if(!mask_mail.test(Mail.value)){
+        error_name.innerText="veuillez saisir une adresse mail correct";        
         Nom.style.borderColor="red";
     }
     else{
@@ -222,7 +226,7 @@ form.addEventListener('submit', function(e){
     localStorage.setItem('email',Email);
    
     questionnaire.style.display="block";
-    gauge_bar();
+    gauge_bar(0);
     print_questions(0);
     timer_manager(60);
     if(input_a.checked){assertion_a.style.borderColor="green";}
@@ -264,9 +268,9 @@ bouton_suivant.addEventListener('click', function(){
             deselectAnswers()
             question_count++;
             question_number++;
-           
-            bar_progress=0;
-            gauge_bar();
+            clearInterval(progress_count);
+            
+            gauge_bar(bar_progress);
             print_questions(question_count);
             timer_manager(60);
             page_en_cours.innerText++;  
@@ -327,24 +331,18 @@ function timer_manager(time){
 //fonction pour le progress bar
 let j=0;
 let progress_count;
-function gauge_bar(){
-     if(j==0){
-         j=1;
-         let width=1;
-         progress_count=setInterval(frame,600);
-         function frame(){
-             if(width==100){
-                 clearInterval(progress_count);
-                 j=0;
-                 bouton_suivant.click();
-             }else{
-                 width++;
-                 progress_bar.style.width=width+"%";
-             }
-         }
-     }
-}
 
+function gauge_bar(time){
+    progress_count=setInterval(timer,600);
+    function timer(){
+        time += 1;
+        progress_bar.style.width=time + "px";
+        if(time > 400){
+            clearInterval(progress_count);
+            bouton_suivant.click();
+        }
+    }
+}
 //fonction selection des réponses
 
 function select_answer() {
